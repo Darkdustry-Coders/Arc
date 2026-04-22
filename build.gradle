@@ -14,6 +14,8 @@ plugins {
     id "de.undercouch.download" version "5.0.1"
 }
 
+def workspacePath = gradle.ext.workspacePath
+
 ext{
     versions = [:]
     libraries = [:]
@@ -115,7 +117,13 @@ subprojects{
     publishing{
         publications{
             maven(MavenPublication){
+                groupId 'anuken.arc'
                 from components.java
+            }
+        }
+        repositories {
+            maven {
+                url = "file://$workspacePath/.cache/maven"
             }
         }
     }

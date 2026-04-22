@@ -44,12 +44,6 @@ public class Pixmap implements Disposable{
      */
     long handle;
 
-    static{
-        if(!supportsBufferCopy && !OS.isIos){
-            UnsafeBuffers.checkInit();
-        }
-    }
-
     /** Creates a new Pixmap instance with the given width and height. */
     public Pixmap(int width, int height){
         load(width, height);
@@ -819,11 +813,7 @@ public class Pixmap implements Disposable{
         if(supportsBufferCopy){
             Java16Buffers.copy(src, srcOffset, dst, dstOffset, len);
         }else{
-            if(!OS.isIos && !UnsafeBuffers.failed){
-                UnsafeBuffers.copy(src, srcOffset, dst, dstOffset, len);
-            }else{
-                Buffers.copyJni(src, srcOffset, dst, dstOffset, len);
-            }
+            UnsafeBuffers.copy(src, srcOffset, dst, dstOffset, len);
         }
     }
 

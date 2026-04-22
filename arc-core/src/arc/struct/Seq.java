@@ -26,6 +26,16 @@ public class Seq<T> implements Iterable<T>, Eachable<T>{
 
     private @Nullable SeqIterable<T> iterable;
 
+    private Seq(T[] array, int size, boolean ordered) {
+        this.items = array;
+        this.size = size;
+        this.ordered = ordered;
+    }
+
+    public static <T> Seq<T> createUnsafe(T[] array, int size, boolean ordered) {
+        return new Seq<>(array, size, ordered);
+    }
+
     /** Creates an ordered array with a capacity of 16. */
     public Seq(){
         this(true, 16);

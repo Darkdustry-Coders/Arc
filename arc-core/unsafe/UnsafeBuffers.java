@@ -6,15 +6,12 @@ import java.lang.reflect.*;
 import java.nio.*;
 
 //uses Unsafe, which won't compile with Gradle normally due to module export issues
-public class UnsafeBuffers{
-    private static Unsafe unsafe;
-    private static long bufferOffset;
-    public static boolean failed, initialized;
+public class UnsafeBuffers {
+    private static final Unsafe unsafe;
+    private static final long bufferOffset;
 
-    public static void checkInit(){
-        if(initialized) return;
-        initialized = true;
-        try{
+    static {
+        try {
             Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
             theUnsafe.setAccessible(true);
             unsafe = (Unsafe)theUnsafe.get(null);
@@ -24,10 +21,8 @@ public class UnsafeBuffers{
             bufferOffset = unsafe.objectFieldOffset(addressField);
             //verify that memory can be copied (in older Android versions, this method doesn't exist)
             sun.misc.Unsafe.class.getMethod("copyMemory", long.class, long.class, long.class);
-            failed = false;
-        }catch(Throwable e){
-            //usually happens on Android and iOS
-            failed = true;
+        } catch(Throwable e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -37,6 +32,5 @@ public class UnsafeBuffers{
 
         unsafe.copyMemory(addressSrc + srcPos, addressDst + dstPos, length);
     }
-
 }
 
