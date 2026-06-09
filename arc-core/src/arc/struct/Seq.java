@@ -701,12 +701,34 @@ public class Seq<T> implements Iterable<T>, Eachable<T>{
 
     /** @return this object */
     public Seq<T> removeAll(Boolf<T> pred){
-        Iterator<T> iter = iterator();
-        while(iter.hasNext()){
-            if(pred.get(iter.next())){
-                iter.remove();
+        // Iterator<T> iter = iterator();
+        // while(iter.hasNext()){
+        //     if(pred.get(iter.next())){
+        //         iter.remove();
+        //     }
+        // }
+        // return this;
+
+        // Mindurka's hopefully more optimized implementation.
+
+        int removed = 0;
+        int len = size;
+        int glueidx = 0;
+        int cplen = 0;
+
+        for (int i = 0; i < len; i++) {
+            if (pred.get(items[i])) {
+                size--;
+
+                System.arraycopy(items, i - cplen, items, glueidx, cplen);
+
+                glueidx = i - removed;
+                removed++;
+                cplen = 0;
             }
+            else cplen++;
         }
+
         return this;
     }
 
