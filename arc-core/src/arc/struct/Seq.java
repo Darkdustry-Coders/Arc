@@ -716,20 +716,25 @@ public class Seq<T> implements Iterable<T>, Eachable<T>{
         int glueidx = 0;
         int cplen = 0;
 
-        for (int i = 0; i < len; i++) {
-            if (pred.get(items[i])) {
-                size--;
+        try {
+            for (int i = 0; i < len; i++) {
+                if (pred.get(items[i])) {
+                    size--;
 
-                System.arraycopy(items, i - cplen, items, glueidx, cplen);
+                    System.arraycopy(items, i - cplen, items, glueidx, cplen);
 
-                glueidx = i - removed;
-                removed++;
-                cplen = 0;
+                    glueidx = i - removed;
+                    removed++;
+                    cplen = 0;
+                }
+                else cplen++;
             }
-            else cplen++;
-        }
+            if (cplen > 0) System.arraycopy(items, len - cplen, items, glueidx, cplen);
 
-        return this;
+            return this;
+        } catch (Exception e) {
+            throw new RuntimeException("removed="+removed+", len="+len+", glueidx="+glueidx+", cplen="+cplen, e);
+        }
     }
 
     public boolean removeAll(Seq<? extends T> array){
